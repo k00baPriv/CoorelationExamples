@@ -1,0 +1,41 @@
+{
+  "random_seed": 42,
+  "n_reps": 400,
+  "revenue_model": {
+    "intercept": 20000,
+    "noise_sd": 5000,
+    "quota_threshold": 40000
+  },
+  "activities": {
+    "demos_given": {
+      "relationship": "causal",
+      "true_effect_per_unit": 1500,
+      "mechanism": "Directly adds to revenue in the generating formula."
+    },
+    "proposals_sent": {
+      "relationship": "causal",
+      "true_effect_per_unit": 2500,
+      "mechanism": "Directly adds to revenue in the generating formula."
+    },
+    "crm_usage": {
+      "relationship": "confounded",
+      "true_effect_per_unit": 0,
+      "mechanism": "Driven by territory_z (better territories mean more accounts to log). Territory also independently drives revenue, so crm_usage correlates with revenue without causing it."
+    },
+    "calls_made": {
+      "relationship": "reverse_causal",
+      "true_effect_per_unit": 0,
+      "mechanism": "Computed FROM revenue (reps with stronger pipelines naturally make more calls). Revenue causes calls_made, not the other way around."
+    },
+    "training_completed": {
+      "relationship": "noise",
+      "true_effect_per_unit": 0,
+      "mechanism": "Drawn independently of everything else. No relationship to revenue."
+    }
+  },
+  "confounder": {
+    "name": "territory_score",
+    "true_effect_per_unit_z": 8000,
+    "note": "territory_z (standardized, mean 0 sd 1) is the actual generating variable. The public dataset stores territory_score = clip(5 + 2*territory_z, 1, 10); recover it approximately with territory_z = (territory_score - 5) / 2."
+  }
+}
